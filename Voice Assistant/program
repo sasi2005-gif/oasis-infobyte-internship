@@ -94,6 +94,6 @@ listen_button = tk.Button(root, text="🎤 Start Voice Assistant", font=("Arial"
 listen_button.pack(pady=10)
 exit_button = tk.Button(root, text="Exit", font=("Arial", 12), bg="red", fg="white", command=root.destroy)
 exit_button.pack(pady=5)
-speak("Hello! shasi I am your voice assistant. ")
+speak("Hello! sasi I am your voice assistant. ")
 
 root.mainloop()
