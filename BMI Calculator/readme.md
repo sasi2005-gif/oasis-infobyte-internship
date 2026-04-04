@@ -1,54 +1,53 @@
-BMI Calculator
+# BMI Calculator
+A simple and interactive **BMI (Body Mass Index) Calculator** built using **Python, HTML, CSS, and JavaScript**. This project allows users to calculate their BMI using weight and height and displays the corresponding health category.
+---
+## Features
+* Instant BMI calculation
+* Displays BMI category
+* Simple and clean user interface
+* Beginner-friendly project
+* Easy to understand and use
+* Useful for learning Python and web basics
+---
+## Technologies Used
+* Python
+* HTML
+* CSS
+---
+## BMI Formula
+**BIM = Weight / (Height × Height)**
+---
+## BMI Categories
+* **Underweight** → BMI less than 18.5
+* **Normal weight** → BMI between 18.5 and 24.9
+* **Overweight** → BMI between 25 and 29.9
+* **Obese** → BMI 30 and above
+---
+## Project Purpose
+This project was created to practice:
+* Python programming
+* User input handling
+* Conditional statements
+* Frontend and backend integration
+* Real-time user interaction
+---
+## Applications
 
-A simple and interactive BMI (Body Mass Index) Calculator built using Python, HTML, CSS, and JavaScript.
-This project helps users calculate their BMI based on weight and height, and shows the corresponding health category.
-Features
-Calculate BMI instantly
-Shows BMI category:
-Underweight
-Normal weight
-Overweight
-Obese
-Simple and user-friendly interface
-Beginner-friendly project
-Real-time BMI calculation support
-Easy to run and understand
-Technologies Used
-Python
-HTML
-CSS
-JavaScript
-How It Works
-The user enters:
-Weight (in kg)
-Height (in meters)
-The application calculates BMI using the formula:
-BMI = Weight / (Height × Height)
-Then it displays the BMI value and the corresponding health category.
-BMI Categories
-BMI Range	Category
-Less than 18.5	Underweight
-18.5 – 24.9	Normal weight
-25 – 29.9	Overweight
-30 and above	Obese
-Project Objective
-The main goal of this project is to build a simple health-related application that demonstrates:
-Basic Python programming
-User input handling
-Conditional statements
-Frontend design integration
-Real-time interaction
-Use Cases
-Health awareness
-Beginner Python practice
-Mini project for students
-Web development practice
-Internship / portfolio project
-Future Improvements
-Add age and gender input
-Add BMI chart visualization
-Add health suggestions
-Add voice input/output support
-Add responsive mobile design
-Author
-Sasidharan Reddy
+* Health awareness tool
+* Mini project for students
+* Beginner Python project
+* Web development practice
+* Portfolio / internship project
+--
+## Future Enhancements
+
+* Add age and gender input
+* Add voice assistant support
+* Add health tips and suggestions
+* Add graphical BMI chart
+* Improve UI design
+---
+## Author
+A SasiDharanReddy
+A.Sasidharan Reddy
+---
