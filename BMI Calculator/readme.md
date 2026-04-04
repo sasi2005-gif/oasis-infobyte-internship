@@ -49,5 +49,4 @@ This project was created to practice:
 ---
 ## Author
 A SasiDharanReddy
-A.Sasidharan Reddy
 ---
