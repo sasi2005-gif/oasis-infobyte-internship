@@ -1,0 +1,23 @@
+import asyncio
+import websockets
+connected_clients = set()
+chat_history = []
+async def handler(websocket):
+    connected_clients.add(websocket)
+    for msg in chat_history:
+        await websocket.send(msg)
+    try:
+        async for message in websocket:
+            chat_history.append(message)
+            for client in connected_clients:
+                if client.open:
+                   await client.send(message)
+    except:
+        pass
+    finally:
+        connected_clients.remove(websocket)
+async def main():
+    print("Chat Server is running on ws://localhost:8765")
+    async with websockets.serve(handler, "localhost", 8765):
+        await asyncio.Future()  
+asyncio.run(main())
