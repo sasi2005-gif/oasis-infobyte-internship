@@ -1,0 +1,64 @@
+import asyncio
+import websockets
+import threading
+import tkinter as tk
+from tkinter import scrolledtext, simpledialog, messagebox
+root = tk.Tk()
+root.title("WebSocket Chat Application")
+root.geometry("500x600")
+root.config(bg="#f0f4f8")
+username = simpledialog.askstring("Login", "Enter your username:")
+if not username:
+    messagebox.showerror("Error", "Username is required!")
+    root.destroy()
+    exit()
+chat_box = scrolledtext.ScrolledText(root, width=60, height=25, font=("Arial", 11))
+chat_box.pack(pady=10)
+chat_box.config(state=tk.DISABLED)
+message_entry = tk.Entry(root, width=40, font=("Arial", 12))
+message_entry.pack(pady=5)
+emoji_frame = tk.Frame(root, bg="#f0f4f8")
+emoji_frame.pack()
+def add_emoji(emoji):
+    message_entry.insert(tk.END, emoji)
+for emoji in ["😊", "😂", "❤️", "👍", "🔥"]:
+    tk.Button(emoji_frame, text=emoji, font=("Arial", 12), command=lambda e=emoji: add_emoji(e)).pack(side=tk.LEFT, padx=5)
+send_button = tk.Button(root, text="Send", font=("Arial", 12), bg="#4CAF50", fg="white")
+send_button.pack(pady=5)
+loop = asyncio.new_event_loop()
+ws = None
+def display_message(message):
+    chat_box.config(state=tk.NORMAL)
+    chat_box.insert(tk.END, message + "\n")
+    chat_box.yview(tk.END)
+    chat_box.config(state=tk.DISABLED)
+async def connect():
+    global ws
+    try:
+        ws = await websockets.connect("ws://localhost:8765")
+        display_message("Connected to chat server.")
+        asyncio.run_coroutine_threadsafe(receive_messages(), loop)
+    except Exception as e:
+        display_message(f"Connection error: {e}")
+async def receive_messages():
+    global ws
+    try:
+        async for message in ws:
+            display_message(message)
+    except:
+        display_message("Disconnected from server.")
+def send_message():
+    global ws
+    msg = message_entry.get().strip()
+    if msg:
+        full_message = f"{username}: {msg}"
+        asyncio.run_coroutine_threadsafe(ws.send(full_message), loop)
+        message_entry.delete(0, tk.END)
+send_button.config(command=send_message)
+def start_async_loop():
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(connect())
+    loop.run_forever()
+threading.Thread(target=start_async_loop, daemon=True).start()
+message_entry.bind("<Return>", lambda event: send_message())
+root.mainloop()
