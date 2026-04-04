@@ -1,28 +1,88 @@
-def calculate_bmi(weight, height):
-    return weight / (height ** 2)
-
+import threading
+import webbrowser
+import json
+import time
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
+import uvicorn
+def calculate_bmi(weight_kg, height_m):
+    return weight_kg / (height_m ** 2)
 def bmi_category(bmi):
     if bmi < 18.5:
         return "Underweight"
-    elif bmi < 24.9:
+    elif bmi < 25:
         return "Normal weight"
-    elif bmi < 29.9:
+    elif bmi < 30:
         return "Overweight"
     else:
         return "Obese"
 
-try:
-    weight = float(input("Enter your weight in kg: "))
-    height = float(input("Enter your height in meters: "))
+def health_tip(category):
+    tips = {
+        "Underweight": "Try a balanced diet with enough calories and protein.",
+        "Normal weight": "Maintain your habits with regular exercise and good nutrition.",
+        "Overweight": "Aim for gradual lifestyle changes: activity, sleep, and portion control.",
+        "Obese": "Consider a structured plan with diet, exercise, and medical guidance if needed."
+    }
+    return tips.get(category, "")
+app = FastAPI()
 
-    if weight <= 0 or height <= 0:
-        print("Please enter valid positive values.")
-    else:
-        bmi = calculate_bmi(weight, height)
-        category = bmi_category(bmi)
+html_content = """
+<!DOCTYPE html>
+<html><head><title>BMI</title></head>
+<body style="font-family:Arial;text-align:center;padding:50px;">
+<h2>BMI Calculator</h2>
+<input id="weight" type="number" placeholder="Weight (kg)"><br><br>
+<input id="height" type="number" placeholder="Height (m)"><br><br>
+<button onclick="calcBMI()">Calculate</button>
+<h3 id="result"></h3>
+<script>
+function calcBMI(){let w=document.getElementById('weight').value,h=document.getElementById('height').value;
+if(w>0&&h>0){let bmi=(w/(h*h)).toFixed(2),c=bmi<18.5?"Underweight":bmi<24.9?"Normal weight":bmi<29.9?"Overweight":"Obese";
+document.getElementById('result').innerHTML="BMI: "+bmi+"<br>Category: "+c;}
+else{document.getElementById('result').innerHTML="Enter valid values";}}
+</script></body></html>
+"""
+@app.get("/")
+async def home():
+    return HTMLResponse(content=html_content)
 
-        print(f"\nYour BMI is: {bmi:.2f}")
-        print(f"Category: {category}")
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            body = json.loads(data)
 
-except ValueError:
-    print("Invalid input! Please enter numeric values only.")
+            weight = float(body.get("weight", 0))
+            height = float(body.get("height", 0))
+
+            if weight <= 0 or height <= 0:
+                await websocket.send_text(json.dumps({
+                    "error": "Please enter valid positive values."
+                }))
+                continue
+
+            bmi = calculate_bmi(weight, height)
+            category = bmi_category(bmi)
+
+            await websocket.send_text(json.dumps({
+                "bmi": round(bmi, 2),
+                "category": category,
+                "tip": health_tip(category)
+            }))
+
+    except WebSocketDisconnect:
+        print("Client disconnected")
+    except Exception as e:
+        print("Error:", e)
+def open_browser():
+    time.sleep(2)
+    webbrowser.open("http://127.0.0.1:8000")
+
+if __name__ == "__main__":
+    threading.Thread(target=open_browser).start()
+    uvicorn.run(app, host="127.0.0.1", port=8000)
+
+
