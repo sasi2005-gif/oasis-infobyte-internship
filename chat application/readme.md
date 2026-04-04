@@ -17,7 +17,7 @@ This project allows multiple users to connect to a server and exchange messages 
 - **websockets**
 ## Project Structure
 
-``` id="z4g59z"
+ id="z4g59z"
 WebSocket-Chat-App/
 │
 ├── client.py      # Chat client GUI
@@ -25,4 +25,6 @@ WebSocket-Chat-App/
 └── README.md      # Project documentation
 ## Author
 
-A.Sasidharan Reddy
+A SasidharanReddy
+
+
