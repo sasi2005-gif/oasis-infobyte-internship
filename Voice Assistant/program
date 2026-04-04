@@ -3,7 +3,6 @@ import pyttsx3
 import datetime
 import webbrowser
 import threading
-import os
 import tkinter as tk
 from tkinter import scrolledtext
 root = tk.Tk()
@@ -12,10 +11,10 @@ root.geometry("600x450")
 root.config(bg="#f0f4f8")
 title_label = tk.Label(root, text="Voice Assistant", font=("Arial", 20, "bold"), bg="#f0f4f8", fg="#333")
 title_label.pack(pady=10)
-output_box = scrolledtext.ScrolledText(root, width=70, height=20, font=("Arial", 11))
+output_box = scrolledtext.ScrolledText(root, width=70, height=18, font=("Arial", 11))
 output_box.pack(pady=10)
 def init_engine():
-    engine = pyttsx3.init('sapi5')
+    engine = pyttsx3.init('sapi5')  
     engine.setProperty('rate', 150)
     voices = engine.getProperty('voices')
     female_voice = None
@@ -59,22 +58,17 @@ def listen():
         return ""
 def process_command(command):
     if "hello" in command:
-        speak("Hello! Reddy How can I help you?")
+        speak("Hello! How can I help you?")
     elif "how are you" in command:
         speak("I am fine, thank you for asking!")
     elif "have you had your lunch" in command:
         speak("I am a machine, I do not eat.")
-    elif "hii" in command:
-        speak("sammera loves u.")
     elif "time" in command:
         current_time = datetime.datetime.now().strftime("%H:%M:%S")
         speak(f"The time is {current_time}")
     elif "date" in command:
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         speak(f"Today's date is {current_date}")
-    elif "start " in command:
-        speak("opening what's app")
-        os.system("start Whatsapp :")
     elif "open" in command:
         speak("What should I search for?")
         query = listen()
@@ -82,7 +76,7 @@ def process_command(command):
             webbrowser.open(f"https://www.google.com/search?q={query}")
             speak("Here are the search results.")
     elif "exit" in command or "stop" in command:
-        speak("Goodbye! ")
+        speak("Goodbye! shasi")
         root.destroy()
     else:
         speak("Please say a valid command.")
@@ -95,7 +89,11 @@ def start_listening():
                 process_command(command)
             if "exit" in command or "stop" in command:
                 break
-    threading.Thread(target=task, daemon=True).start()
-start_listening()
-speak("Reddy! I am your voice assistant. Say a command to get started.")
+    threading.Thread(target=task).start()
+listen_button = tk.Button(root, text="🎤 Start Voice Assistant", font=("Arial", 14), bg="#4CAF50", fg="white", command=start_listening)
+listen_button.pack(pady=10)
+exit_button = tk.Button(root, text="Exit", font=("Arial", 12), bg="red", fg="white", command=root.destroy)
+exit_button.pack(pady=5)
+speak("Hello! shasi I am your voice assistant. ")
+
 root.mainloop()
