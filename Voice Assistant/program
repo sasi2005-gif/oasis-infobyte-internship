@@ -1,0 +1,101 @@
+import speech_recognition as sr
+import pyttsx3
+import datetime
+import webbrowser
+import threading
+import os
+import tkinter as tk
+from tkinter import scrolledtext
+root = tk.Tk()
+root.title("Voice Assistant")
+root.geometry("600x450")
+root.config(bg="#f0f4f8")
+title_label = tk.Label(root, text="Voice Assistant", font=("Arial", 20, "bold"), bg="#f0f4f8", fg="#333")
+title_label.pack(pady=10)
+output_box = scrolledtext.ScrolledText(root, width=70, height=20, font=("Arial", 11))
+output_box.pack(pady=10)
+def init_engine():
+    engine = pyttsx3.init('sapi5')
+    engine.setProperty('rate', 150)
+    voices = engine.getProperty('voices')
+    female_voice = None
+    for v in voices:
+        if "female" in v.name.lower() or "zira" in v.name.lower():
+            female_voice = v.id
+            break
+    engine.setProperty('voice', female_voice if female_voice else voices[0].id)
+    return engine
+def speak(text):
+    output_box.insert(tk.END, f"Assistant: {text}\n")
+    output_box.see(tk.END)
+    threading.Thread(target=_speak, args=(text,)).start()
+def _speak(text):
+    engine = init_engine()
+    engine.say(text)
+    engine.runAndWait()
+    engine.stop()
+recognizer = sr.Recognizer()
+def listen():
+    try:
+        with sr.Microphone() as source:
+            output_box.insert(tk.END, "Listening...\n")
+            output_box.see(tk.END)
+            recognizer.adjust_for_ambient_noise(source, duration=1)
+            audio = recognizer.listen(source)
+        command = recognizer.recognize_google(audio)
+        output_box.insert(tk.END, f"You: {command}\n")
+        output_box.see(tk.END)
+        return command.lower()
+    except sr.UnknownValueError:
+        speak("Sorry, I did not catch that. Please repeat.")
+        return ""
+    except sr.RequestError:
+        speak("Network error. Check your internet connection.")
+        return ""
+    except Exception as e:
+        output_box.insert(tk.END, f"Error: {e}\n")
+        output_box.see(tk.END)
+        speak("Sorry, something went wrong.")
+        return ""
+def process_command(command):
+    if "hello" in command:
+        speak("Hello! Reddy How can I help you?")
+    elif "how are you" in command:
+        speak("I am fine, thank you for asking!")
+    elif "have you had your lunch" in command:
+        speak("I am a machine, I do not eat.")
+    elif "hii" in command:
+        speak("sammera loves u.")
+    elif "time" in command:
+        current_time = datetime.datetime.now().strftime("%H:%M:%S")
+        speak(f"The time is {current_time}")
+    elif "date" in command:
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        speak(f"Today's date is {current_date}")
+    elif "start " in command:
+        speak("opening what's app")
+        os.system("start Whatsapp :")
+    elif "open" in command:
+        speak("What should I search for?")
+        query = listen()
+        if query:
+            webbrowser.open(f"https://www.google.com/search?q={query}")
+            speak("Here are the search results.")
+    elif "exit" in command or "stop" in command:
+        speak("Goodbye! ")
+        root.destroy()
+    else:
+        speak("Please say a valid command.")
+def start_listening():
+    def task():
+        speak("Voice assistant activated. Listening for commands.")
+        while True:
+            command = listen()
+            if command:
+                process_command(command)
+            if "exit" in command or "stop" in command:
+                break
+    threading.Thread(target=task, daemon=True).start()
+start_listening()
+speak("Reddy! I am your voice assistant. Say a command to get started.")
+root.mainloop()
