@@ -1,6 +1,6 @@
-# WebSocket Chat Application
+# Chat Application
 
-A simple **real-time chat application** built using **Python**, **WebSockets**, and **Tkinter GUI**.  
+A simple **real-time chat application** built using **Python**, and **Tkinter GUI**.  
 This project allows multiple users to connect to a server and exchange messages instantly.
 ## Features
 - Real-time messaging using **WebSockets**
